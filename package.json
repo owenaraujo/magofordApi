@@ -7,7 +7,7 @@
     "dev": "nodemon --exec babel-node src/index.js ",
     "test": "babel-node src/index.js  ",
     "build": "babel src --out-dir build",
-    "start": "pm2 start build/index.js"
+    "start": " node build/index.js"
   },
   "author": "",
   "license": "ISC",
