@@ -1,16 +1,34 @@
 import productos from "../models/productos";
-
+import path from "path"
+import cloudinary from "cloudinary"
 export async function save(req, res) {
+ 
   try {
+     
+  let EDFile = req.files.img
+  let ruta = path.join(__dirname,`../public/files/ ${EDFile.name}` )
+   await EDFile.mv(ruta)
+   cloudinary.config({ 
+    cloud_name: 'dn9dlda5v', 
+    api_key: '215426649821956', 
+    api_secret: 'de2gegNQzeoGxA2nBjm5TOai1Mo' 
+  });
+ const imagenUrl = await cloudinary.v2.uploader
+ .upload(ruta)
+
+   
+   
     const datos = req.body;
     const verifyCodigo = await productos.findOne({ codigo: datos.codigo });
     if (!verifyCodigo) {
+      datos.img= imagenUrl.url
       await new productos(datos).save();
       res.json({ value: "producto guardado con exito", status: true });
     } else {
       res.json({ value: "codigo de producto ya en uso", status: null });
     }
   } catch (error) {
+    console.log(error)
     res.json({ value: "todo ha salido satisfactoriamente mal", status: false });
   }
 }

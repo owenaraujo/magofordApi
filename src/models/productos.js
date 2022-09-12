@@ -10,6 +10,7 @@ const producto = new Schema({
     cantidad:{type: Number,  required: true},
     ubicacion:{type: String,  required: false},
     //iva:{type: Number,  required: false},
+    img:{type:String},
     alerta:{type: String,  required: false},
    // precio:{type: Number , required: true},
    // proveedor_id:{type: Schema.Types.ObjectId, ref: 'proveedores'},

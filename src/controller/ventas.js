@@ -36,7 +36,6 @@ export async function save(req, res) {
     const data = await ventas
       .findById(id._id)
       .populate({ path: "productos.producto_id" })
-      .populate("cliente_id")
       .populate("user_id");
     res.json({ value: "venta hecha con exito", status: true, data });
   } catch (error) {
@@ -71,7 +70,6 @@ export async function get(req, res) {
   const data = await ventas
     .find()
     .populate("user_id")
-    .populate("cliente_id")
     .populate({ path: "productos.producto_id" });
   res.json(data);
 }
@@ -86,7 +84,6 @@ export async function getLimit(req, res) {
     .skip(pagination.start)
     .limit(pagination.count)
     .populate("user_id")
-    .populate("cliente_id")
     .populate({ path: "productos.producto_id" });
   res.json({ventas : data , count : count});
 

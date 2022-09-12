@@ -7,7 +7,7 @@ route.get('/default',(req,res)=>{
 })
 route.get('/', buscar)
 route.get('/:id', buscarId)
-route.post('/',verifyToken, save)
+route.post('/', save)
 route.post('/:id', editar)
 route.put('/cantidad/:id', agregar)
 route.delete('/activar/:id', activar)

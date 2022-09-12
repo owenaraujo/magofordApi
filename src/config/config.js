@@ -10,6 +10,14 @@ import usuarios from '../routes/usuarios'
 import ventas from '../routes/ventas'
 import system from '../routes/sistema'
 const app = express()
+import cloudy from "cloudinary"
+cloudy.config(
+  {
+    cloud_name: process.env.cloudName,
+    api_key:process.env.apiKey,
+    api_secret:process.env.apiSecret
+  }
+)
 import history from 'connect-history-api-fallback'
 app.use(cors())
 app.use(morgan("dev"))
@@ -24,7 +32,8 @@ buscar()
   //  console.log('jola')
     //res.json(info);
 //})
-
+import fu from "express-fileupload"
+app.use(fu() )
 app.use('/api/clientes', clientes)
 app.use('/api/proveedores', proveedores)
 app.use('/api/productos', productos)
