@@ -21,7 +21,7 @@ export async function login(req, res) {
         : res.json({ value: "contrase;a incorrecta", status: false });
     }
       } catch (e) {
-    res.json({value: 'todo ha salido satisfactoriamente mal', status: false})
+    res.json({value: 'no hay respuesta del servdor', status: false})
   }
 }
 
@@ -109,6 +109,6 @@ export async function buscarId(req, res) {
    if(!usuario) return res.json({value: 'usuario no encontrado', status:null})
   res.json(usuario);
  } catch (error) {
-   res.json({value: 'todo ha salido satisfactoriamente mal', status:false})
+   res.json({value: 'no hay respuesta del servdor', status:false})
  }
 }

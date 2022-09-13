@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose"
 
 const producto = new Schema({
-    nombre:{type: String,  required: true},
+   // nombre:{type: String,  required: true},
    // marca:{type: String,  required: true},
    // modelo:{type: String,  required: true},
     codigo:{type: String,  required: true},

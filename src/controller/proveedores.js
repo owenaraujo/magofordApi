@@ -18,7 +18,7 @@ if(resultado){
   }
   } catch (error) {
     console.log(error);
-    res.json({ data: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ data: "no hay respuesta del servdor", status: false });
   }
 }
 export async function save(req, res) {
@@ -33,7 +33,7 @@ export async function save(req, res) {
     }
   } catch (error) {
     console.log(error);
-    res.json({ data: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ data: "no hay respuesta del servdor", status: false });
   }
 }
 
@@ -65,7 +65,7 @@ export async function desactivar(req, res) {
     await proveedores.findByIdAndUpdate(id, status);
     res.json({ data: "proveedor desactivado", status: true });
   } catch (error) {
-    res.json({ data: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ data: "no hay respuesta del servdor", status: false });
   }
 }
 export async function activar(req, res) {
@@ -75,6 +75,6 @@ export async function activar(req, res) {
     await proveedores.findByIdAndUpdate(id, status);
     res.json({ data: "proveedor activado", status: true });
   } catch (error) {
-    res.json({ data: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ data: "no hay respuesta del servdor", status: false });
   }
 }

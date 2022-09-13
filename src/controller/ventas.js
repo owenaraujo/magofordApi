@@ -1,6 +1,6 @@
 import ventas from "../models/ventas";
 import productos from "../models/productos";
-
+let falla = { value: "no hay respuesta del servdor", status: false }
 export async function save(req, res) {
   try {
     const datos = req.body;
@@ -39,19 +39,28 @@ export async function save(req, res) {
       .populate("user_id");
     res.json({ value: "venta hecha con exito", status: true, data });
   } catch (error) {
-    res.json({ value: "todo ha salido satisfactoriamente mal", status: false });
+    res.json(falla);
   }
 }
 export function editar(req, res) {
+ try {
   const { id } = req.params;
   const datos = req.body;
   console.log(datos, id);
+ } catch (error) {
+  res.json(falla)
+ }
 }
 
 export function activar(req, res) {
+ try {
   const { id } = req.params;
+ 
   const status = { status: true };
   console.log(status, id);
+ } catch (error) {
+  res.json(falla)
+ }
 }
 export function filtroFecha(req, res) {
   const { inicio, fin } = req.params;

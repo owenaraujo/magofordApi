@@ -28,8 +28,7 @@ export async function save(req, res) {
       res.json({ value: "codigo de producto ya en uso", status: null });
     }
   } catch (error) {
-    console.log(error)
-    res.json({ value: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ value: "no hay respuesta del servdor", status: false });
   }
 }
 export async function editar(req, res) {
@@ -50,7 +49,7 @@ export async function editar(req, res) {
       res.json({ value: "producto editado con exito", status: true });
   }
   } catch (error) {
-    res.json({ value: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ value: "no hay respuesta del servdor", status: false });
   }
 }
 export async function agregar(req, res){
@@ -61,7 +60,7 @@ export async function agregar(req, res){
   res.json({ value: "producto editado con exito", status: true });
   
   } catch (e) {
-    res.json({ value: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ value: "no hay respuesta del servdor", status: false });
     
   }
 }
@@ -72,7 +71,7 @@ export async function desactivar(req, res) {
   await productos.findByIdAndUpdate(id, status);
       res.json({ value: "producto desactivado con exito", status: true });
   } catch (error) {
-    res.json({ value: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ value: "no hay respuesta del servdor", status: false });
   }
 }
 export async function activar(req, res) {
@@ -82,7 +81,7 @@ export async function activar(req, res) {
     await productos.findByIdAndUpdate(id, status)
         res.json({ value: "producto activado con exito", status: true });
 } catch (error) {
-    res.json({ value: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ value: "no hay respuesta del servdor", status: false });
       
   }
 }
@@ -91,7 +90,7 @@ export async function buscar(req, res) {
     const producto = await productos.find()
     res.json(producto)
   } catch (error) {
-    res.json({ value: "todo ha salido satisfactoriamente mal", status: false });
+    res.json({ value: "no hay respuesta del servdor", status: false });
     
   }
 
@@ -103,7 +102,7 @@ try {
   const producto = await productos.findById(id)
   res.json(producto)
 } catch (error) {
-  res.json({ value: "todo ha salido satisfactoriamente mal", status: false });
+  res.json({ value: "no hay respuesta del servdor", status: false });
   
 }
 }
