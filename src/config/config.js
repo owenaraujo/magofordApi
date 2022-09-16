@@ -18,13 +18,13 @@ cloudy.config(
     api_secret:process.env.apiSecret
   }
 )
-import history from 'connect-history-api-fallback'
+//import history from 'connect-history-api-fallback'
 app.use(cors())
 app.use(morgan("dev"))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 import {buscar} from './config.roles'
-app.use(history())
+//app.use(history())
 app.use(express.static(path.join(__dirname, "../public")));
 
 buscar()
