@@ -87,7 +87,7 @@ export async function activar(req, res) {
 }
 export async function buscar(req, res) {
   try {
-    const producto = await productos.find()
+    const producto = await productos.find({status: true})
     res.json(producto)
   } catch (error) {
     res.json({ value: "no hay respuesta del servdor", status: false });

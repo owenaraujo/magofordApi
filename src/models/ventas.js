@@ -6,7 +6,7 @@ const venta = new Schema({
   factura: {type: Number, required : true},
   productos: [
     {
-      //precio: { type: Number },
+      precio: { type: Number, default:0 },
       //imei: [{value : {type: Number} }],
       cantidad: { type: Number },
      // iva: { type: Number, default: 0 },
@@ -17,7 +17,8 @@ const venta = new Schema({
   //dolar: {type: Number, required: false},
  // abonos: [Number],
   status: {type: Boolean, default: true},
-  //prestamos: {type: Boolean, default: false},
+  pago: {type: String, required: false},
+  credito: {type: Boolean, default: false},
 }
 ,{
   versionKey : false, timestamps: true
