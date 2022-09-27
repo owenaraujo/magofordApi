@@ -1,4 +1,4 @@
-import proveedores from "../models/proveedores";
+import ubicaciones from "../models/tiendas";
 export async function actualizar(req, res) {
   try {
     const { id } = req.params;
@@ -24,12 +24,12 @@ if(resultado){
 export async function save(req, res) {
   try {
     const datos = req.body;
-    const resultado = await proveedores.findOne({ rif: datos.rif });
+    const resultado = await ubicaciones.findOne({ nombre: datos.nombre });
     if (!resultado) {
-      await new proveedores(datos).save();
-      res.json({ data: "proveedor regitrado con exito", status: true });
+      await new ubicaciones(datos).save();
+      res.json({ data: "ubicacion regitrado con exito", status: true });
     } else {
-      res.json({ data: "proveedor ya regitrado", status: null });
+      res.json({ data: "ubicacion ya regitrado", status: null });
     }
   } catch (error) {
     console.log(error);
@@ -39,22 +39,24 @@ export async function save(req, res) {
 
 export async function buscarActivos(req, res) {
   try {
-    const proveedor = await proveedores.find({status: true});
-    res.json(proveedor);
+    const ubicacion = await ubicaciones.find({status: true});
+    res.json(ubicacion);
   } catch (error) {}
 }
 
 export async function buscar(req, res) {
   try {
-    const proveedor = await proveedores.find();
-    res.json(proveedor);
-  } catch (error) {}
+    const ubicacion = await ubicaciones.find();
+    res.json(ubicacion);
+  } catch (error) {
+    res.json("no hay datos")
+  }
 }
 export async function buscarId(req, res) {
   try {
     const { id } = req.params;
-    const proveedor = await proveedores.findById(id);
-    res.json(proveedor);
+    const ubicacion = await ubicaciones.findById(id);
+    res.json(ubicacion);
   } catch (error) {}
 }
 
@@ -62,8 +64,8 @@ export async function desactivar(req, res) {
   try {
     const { id } = req.params;
     const status = { status: false };
-    await proveedores.findByIdAndUpdate(id, status);
-    res.json({ data: "proveedor desactivado", status: true });
+    await ubicaciones.findByIdAndUpdate(id, status);
+    res.json({ data: "ubicacion desactivado", status: true });
   } catch (error) {
     res.json({ data: "no hay respuesta del servdor", status: false });
   }
@@ -72,8 +74,8 @@ export async function activar(req, res) {
   try {
     const { id } = req.params;
     const status = { status: true };
-    await proveedores.findByIdAndUpdate(id, status);
-    res.json({ data: "proveedor activado", status: true });
+    await ubicaciones.findByIdAndUpdate(id, status);
+    res.json({ data: "ubicacion activado", status: true });
   } catch (error) {
     res.json({ data: "no hay respuesta del servdor", status: false });
   }

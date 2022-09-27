@@ -4,7 +4,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 import info from "../../package.json"
 import clientes from '../routes/clientes'
-import proveedores from '../routes/proveedores'
+import ubicaciones from '../routes/ubicaciones'
 import productos from '../routes/productos'
 import usuarios from '../routes/usuarios'
 import ventas from '../routes/ventas'
@@ -35,13 +35,13 @@ buscar()
 import fu from "express-fileupload"
 app.use(fu() )
 app.use('/api/clientes', clientes)
-app.use('/api/proveedores', proveedores)
+app.use('/api/ubicaciones', ubicaciones)
 app.use('/api/productos', productos)
 app.use('/api/usuarios', usuarios)
 app.use('/api/ventas', ventas)
 app.use('/api/system',system)
 app.set('port',process.env.PORT || 3000)
 app.use(function(req, res, next) {
-    res.redirect('/')
+    res.status(404)
 })
 export default app

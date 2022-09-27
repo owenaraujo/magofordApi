@@ -1,4 +1,5 @@
 import productos from "../models/productos";
+import stock from "../models/stock"
 import path from "path"
 import cloudinary from "cloudinary"
 export async function save(req, res) {
@@ -54,12 +55,21 @@ export async function editar(req, res) {
 }
 export async function agregar(req, res){
   try {
-    const {id} = req.params
-  const newData = req.body
-  await productos.findByIdAndUpdate(id, newData)
-  res.json({ value: "producto editado con exito", status: true });
+  let newData = req.body
+  const result = await stock.countDocuments({id_product: newData.id_product, id_tienda: newData.id_tienda})
+
+  if(result > 0){    
+    await stock.findOneAndUpdate({id_product: newData.id_product, id_tienda: newData.id_tienda},{cantidad:newData.cantidad})
+
+    res.json({value: "nuevo stock agregado con exito", status: true });
+  return}
+
+  
+  await new stock(newData).save()
+  res.json({ value: "stock agregado con exito", status: true });
   
   } catch (e) {
+    console.log(e)
     res.json({ value: "no hay respuesta del servdor", status: false });
     
   }
@@ -87,7 +97,7 @@ export async function activar(req, res) {
 }
 export async function buscar(req, res) {
   try {
-    const producto = await productos.find({status: true})
+    const producto = await productos.find()
     res.json(producto)
   } catch (error) {
     res.json({ value: "no hay respuesta del servdor", status: false });
@@ -95,7 +105,39 @@ export async function buscar(req, res) {
   }
 
 }
+// hay que agregar esta funcion al path
+// export async function buscarActivos(req, res) {
+//   try {
+//     const producto = await productos.find({status: true})
+//     res.json(producto)
+//   } catch (error) {
+//     res.json({ value: "no hay respuesta del servdor", status: false });
+    
+//   }
 
+// }
+export async function buscarAllStock(req, res) {
+  try {
+    const producto = await stock.find({id_tienda: req.params.param}).populate("id_product").populate("id_tienda")
+    res.json(producto)
+  } catch (error) {
+    
+    res.json({ value: "no hay respuesta del servdor", status: false });
+    
+  }
+
+}
+
+export async function buscarStock(req, res) {
+try {
+ 
+ const result = await stock.findOne({id_product:req.params.idProducto, id_tienda: req.params.idTienda})
+ res.json(result)
+} catch (error) {
+  res.json({ value: "no hay respuesta del servdor", status: false });
+  
+}
+}
 export async function buscarId(req, res) {
 try {
   const { id } = req.params;

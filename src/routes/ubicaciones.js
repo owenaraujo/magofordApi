@@ -1,6 +1,6 @@
 import {Router} from 'express'
 const route = Router()
-import {save,buscarId,buscarActivos, buscar, desactivar, activar, actualizar} from '../controller/proveedores'
+import {save,buscarId,buscarActivos, buscar, desactivar, activar, actualizar} from '../controller/ubicaciones'
 route.get('/default',(req,res)=>{
     res.json('default')
 })
