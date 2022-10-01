@@ -24,9 +24,10 @@ app.use(morgan("dev"))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 import {buscar} from './config.roles'
+import{createubicaciones} from "./config.ubicaciones"
 //app.use(history())
 app.use(express.static(path.join(__dirname, "../public")));
-
+createubicaciones()
 buscar()
 //app.get('/',(req, res) =>{
   //  console.log('jola')

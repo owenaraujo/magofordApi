@@ -1,12 +1,14 @@
 import {Router} from 'express'
 import { verifyToken } from '../midleware/token'
-import {activar,desactivar,buscar,agregar,save,buscarId,editar, buscarStock, buscarAllStock} from '../controller/productos'
+import {activar,desactivar,buscar,agregar,save,buscarId,editar, buscarStock, buscarAllStock, buscarActivos, buscarInactivos} from '../controller/productos'
 const route = Router()
 route.get('/default',(req,res)=>{
     res.json('default')
 })
 route.get('/stock/:param', buscarAllStock)
 route.get('/', buscar)
+route.get('/activos', buscarActivos)
+route.get('/inactivos', buscarInactivos)
 route.get('/:id', buscarId)
 route.get('/:idTienda/:idProducto', buscarStock)
 route.post('/', save)

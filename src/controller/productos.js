@@ -106,16 +106,26 @@ export async function buscar(req, res) {
 
 }
 // hay que agregar esta funcion al path
-// export async function buscarActivos(req, res) {
-//   try {
-//     const producto = await productos.find({status: true})
-//     res.json(producto)
-//   } catch (error) {
-//     res.json({ value: "no hay respuesta del servdor", status: false });
+export async function buscarActivos(req, res) {
+  try {
+    const producto = await productos.find({status: true})
+    res.json(producto)
+  } catch (error) {
+    res.json({ value: "no hay respuesta del servdor", status: false });
     
-//   }
+  }
 
-// }
+}
+export async function buscarInactivos(req, res) {
+  try {
+    const producto = await productos.find({status: false})
+    res.json(producto)
+  } catch (error) {
+    res.json({ value: "no hay respuesta del servdor", status: false });
+    
+  }
+
+}
 export async function buscarAllStock(req, res) {
   try {
     const producto = await stock.find({id_tienda: req.params.param}).populate("id_product").populate("id_tienda")

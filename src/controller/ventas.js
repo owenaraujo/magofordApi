@@ -62,9 +62,21 @@ export function activar(req, res) {
   res.json(falla)
  }
 }
-export function filtroFecha(req, res) {
-  const { inicio, fin } = req.params;
-  console.log(inicio, fin);
+export async function filtroFecha(req, res) {
+  const {inicio, final}= req.params
+   
+    var fecha = 'T23:59:00.000Z'
+    var fechaInicio = new Date(inicio);
+    var fechaFinal = new Date(final+fecha);
+    const ventas = await Ventas.find(
+     { createdAt:{
+        $gte: fechaInicio,
+        $lt: fechaFinal
+    }}
+    ) .find()
+    .populate("user_id")
+    .populate({ path: "productos.producto_id" })
+    res.json(ventas)
 }
 export function limit(req, res) {
   const { count } = req.params;
