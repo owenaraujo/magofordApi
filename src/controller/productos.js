@@ -34,8 +34,25 @@ export async function save(req, res) {
 }
 export async function editar(req, res) {
   try {
+    let datos = req.body;
+    if (req.files) {
+          
+  let EDFile = req.files.img
+  let ruta = path.join(__dirname,`../public/files/ ${EDFile.name}` )
+   await EDFile.mv(ruta)
+   cloudinary.config({ 
+    cloud_name: 'dn9dlda5v', 
+    api_key: '215426649821956', 
+    api_secret: 'de2gegNQzeoGxA2nBjm5TOai1Mo' 
+  });
+const img = await cloudinary.v2.uploader
+ .upload(ruta)
+datos.img= img.url
+    }
+  
+  
     const { id } = req.params;
-    const datos = req.body;
+   
     const verifyCodigo = await productos.findOne({ codigo: datos.codigo }, {limit:1});
     if(verifyCodigo){
     if (verifyCodigo._id.toString() === id) {
@@ -50,6 +67,7 @@ export async function editar(req, res) {
       res.json({ value: "producto editado con exito", status: true });
   }
   } catch (error) {
+    console.log(error);
     res.json({ value: "no hay respuesta del servdor", status: false });
   }
 }

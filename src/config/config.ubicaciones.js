@@ -25,7 +25,9 @@ async function create() {
         nombre: 'el vigia',
     
     }
-    await new ubicaciones(valencia,barquisimeto, vigia).save()
+    await new tiendas(valencia).save()
+    await new tiendas(barquisimeto).save()
+    await new tiendas(vigia).save()
   } catch (error) {
       console.log('hubo un error en la creacion de ubicaciones');
   }
