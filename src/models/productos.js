@@ -6,6 +6,7 @@ const producto = new Schema({
     status: { type: Boolean, default: true },
     descripcion: { type: String, required: true },
     img: { type: String },
+    img_id: {type: String},
     alerta: { type: String, required: false },
 
 
