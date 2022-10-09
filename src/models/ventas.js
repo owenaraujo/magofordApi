@@ -2,25 +2,26 @@ import { model, Schema } from "mongoose";
 
 const venta = new Schema({
   user_id: { type: Schema.Types.ObjectId, ref: "usuarios" },
- // cliente_id: { type: Schema.Types.ObjectId, ref: "clientes" },
-  factura: {type: Number, required : true},
+
+  factura: { type: Number, required: true },
   productos: [
     {
-      precio: { type: Number, default:0 },
-      //imei: [{value : {type: Number} }],
+      status:{type: Boolean, default: true},
+      precio: { type: Number, default: 0 },
       cantidad: { type: Number },
-     // iva: { type: Number, default: 0 },
+      
+      ubicacion_id: { type: Schema.Types.ObjectId, ref: "tiendas" },
       producto_id: { type: Schema.Types.ObjectId, ref: "productos" },
     },
   ],
-  nota: {type: String, required: false},
-  //dolar: {type: Number, required: false},
- // abonos: [Number],
-  status: {type: Boolean, default: true},
-  pago: {type: String, required: false},
-  credito: {type: Boolean, default: false},
+  nota: { type: String, required: false },
+  status: { type: Boolean, default: true },
+  
+  pagado:{type: Boolean, default: false},
+  TipoPago: { type: String, required: false },
+  credito: { type: Boolean, default: false },
 }
-,{
-  versionKey : false, timestamps: true
-});
+  , {
+    versionKey: false, timestamps: true
+  });
 export default model('ventas', venta)

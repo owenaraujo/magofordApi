@@ -1,12 +1,14 @@
 import ventas from "../models/ventas";
+import stock from "../models/stock"
 import productos from "../models/productos";
 let falla = { value: "no hay respuesta del servdor", status: false }
 export async function save(req, res) {
   try {
     const datos = req.body;
+  
     let status = await Promise.all(
       datos.productos.map(async function (item) {
-        let producto = await productos.findById(item.producto_id);
+        let producto = await stock.find({id_product: item.producto_id, id_tienda: item.ubicacion_id});
         let cantidad = producto.cantidad - item.cantidad;
         if (cantidad < 0) return false;
         else {
@@ -23,9 +25,10 @@ export async function save(req, res) {
 
     await Promise.all(
       datos.productos.map(async function (item) {
-        let producto = await productos.findById(item.producto_id);
+        let producto = await stock.findOne({id_product: item.producto_id, id_tienda: item.ubicacion_id});
         let cantidad = producto.cantidad - item.cantidad;
-        await productos.findByIdAndUpdate(item.producto_id, {
+        
+        await stock.findByIdAndUpdate(producto._id, {
           cantidad: cantidad,
         });
       })
@@ -39,6 +42,7 @@ export async function save(req, res) {
       .populate("user_id");
     res.json({ value: "venta hecha con exito", status: true, data });
   } catch (error) {
+    console.log(error);
     res.json(falla);
   }
 }
@@ -68,7 +72,7 @@ export async function filtroFecha(req, res) {
     var fecha = 'T23:59:00.000Z'
     var fechaInicio = new Date(inicio);
     var fechaFinal = new Date(final+fecha);
-    const ventas = await Ventas.find(
+    const ventas = await ventas.find(
      { createdAt:{
         $gte: fechaInicio,
         $lt: fechaFinal
@@ -95,17 +99,30 @@ export async function get(req, res) {
   res.json(data);
 }
 export async function getLimit(req, res) {
-  let { limit, page } = req.params;
+ try {
+  let { limit, page, inicio, final } = req.params;
+  let complementoFecha = 'T23:59:00.000Z'
+    let fechaInicio = new Date(inicio);
+    let fechaFinal = new Date(final+complementoFecha);
   limit = parseInt(limit);
   page = parseInt(page);
+  let fecha=
+  { createdAt:{
+    $gte: fechaInicio,
+    $lt: fechaFinal
+}}
+if(!inicio) fecha= null
   const count = await ventas.countDocuments()
   let pagination = { start: (page - 1) * limit, count: limit };
   const data = await ventas
-    .find()
+    .find(fecha)
     .skip(pagination.start)
     .limit(pagination.count)
     .populate("user_id")
     .populate({ path: "productos.producto_id" });
   res.json({ventas : data , count : count});
 
+ } catch (error) {
+  res.json(falla)
+ }
 }
