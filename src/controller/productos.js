@@ -2,18 +2,23 @@ import productos from "../models/productos";
 import stock from "../models/stock"
 import path from "path"
 import cloudinary from "cloudinary"
+cloudinary.config({
+  cloud_name: 'dn9dlda5v',
+  api_key: '215426649821956',
+  api_secret: 'de2gegNQzeoGxA2nBjm5TOai1Mo'
+});
 export async function save(req, res) {
 
   try {
-
-    let EDFile = req.files.img
-    let ruta = path.join(__dirname, `../public/files/ ${EDFile.name}`)
-    await EDFile.mv(ruta)
     cloudinary.config({
       cloud_name: 'dn9dlda5v',
       api_key: '215426649821956',
       api_secret: 'de2gegNQzeoGxA2nBjm5TOai1Mo'
     });
+    let EDFile = req.files.img
+    let ruta = path.join(__dirname, `../public/files/ ${EDFile.name}`)
+    await EDFile.mv(ruta)
+    
     const imagenUrl = await cloudinary.v2.uploader
       .upload(ruta)
 
@@ -34,6 +39,8 @@ export async function save(req, res) {
   }
 }
 export async function editar(req, res) {
+
+  //arregla logica de edicion
   try {
     cloudinary.config({
       cloud_name: 'dn9dlda5v',

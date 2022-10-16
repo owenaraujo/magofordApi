@@ -1,6 +1,7 @@
 import {Schema, model} from "mongoose"
 const categoria = new Schema({
-    nombre: {type:String}
+    nombre: {type:String},
+    cantidad: {type:String}
 },{
     versionKey: false,
     timestamps: true
