@@ -56,12 +56,12 @@ export async function editar(req, res) {
  datos.img = img.url
       datos.img_id = img.public_id
     }
-    if (verifyCodigo.img_id) {
-      const res = await cloudinary.v2.uploader.destroy(verifyCodigo.img_id)
-      console.log(res);
+    if(verifyCodigo){
+      if (verifyCodigo.img_id) {
+        const res = await cloudinary.v2.uploader.destroy(verifyCodigo.img_id)
+        console.log(res);
 
-      
-     
+      }
     }
 
 
