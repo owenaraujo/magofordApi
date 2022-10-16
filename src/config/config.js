@@ -3,6 +3,7 @@ import path from "path"
 import cors from 'cors'
 import morgan from 'morgan'
 import info from "../../package.json"
+import categorias from "../routes/categorias"
 import clientes from '../routes/clientes'
 import ubicaciones from '../routes/ubicaciones'
 import productos from '../routes/productos'
@@ -35,6 +36,7 @@ buscar()
 //})
 import fu from "express-fileupload"
 app.use(fu() )
+app.use('/api/categorias', categorias)
 app.use('/api/clientes', clientes)
 app.use('/api/ubicaciones', ubicaciones)
 app.use('/api/productos', productos)
