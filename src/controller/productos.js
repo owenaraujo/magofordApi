@@ -18,7 +18,7 @@ export async function save(req, res) {
     let EDFile = req.files.img
     let ruta = path.join(__dirname, `../public/files/ ${EDFile.name}`)
     await EDFile.mv(ruta)
-    
+
     const imagenUrl = await cloudinary.v2.uploader
       .upload(ruta)
 
@@ -56,14 +56,14 @@ export async function editar(req, res) {
 
       let EDFile = req.files.img
       let ruta = path.join(__dirname, `../public/files/ ${EDFile.name}`)
-       await EDFile.mv(ruta)
+      await EDFile.mv(ruta)
 
       const img = await cloudinary.v2.uploader
         .upload(ruta)
- datos.img = img.url
+      datos.img = img.url
       datos.img_id = img.public_id
     }
-    if(verifyCodigo){
+    if (verifyCodigo) {
       if (verifyCodigo.img_id) {
         const res = await cloudinary.v2.uploader.destroy(verifyCodigo.img_id)
         console.log(res);
@@ -146,8 +146,29 @@ export async function buscar(req, res) {
 // hay que agregar esta funcion al path
 export async function buscarActivos(req, res) {
   try {
-    const producto = await productos.find({ status: true })
-    res.json(producto)
+    const limit = parseInt(req.query.limit)
+    
+    const page = parseInt(req.query.page)
+    let pagination = { start: (page - 1) * limit, count: limit };
+    const count = await productos.countDocuments()
+
+    const producto = await productos.find({
+      $or: [{
+        codigo: { $regex: req.query.Name + `.*`, $options: "i" },
+
+      },
+      {
+        descripcion: { $regex: `.*` + req.query.Name + `.*`, $options: "i" },
+
+      },
+
+
+      ],
+
+
+      status: true
+    }).skip(pagination.start).limit(pagination.count).populate("categoria")
+    res.json({productos:producto, count:count})
   } catch (error) {
     res.json({ value: "no hay respuesta del servdor", status: false });
 
