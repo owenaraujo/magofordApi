@@ -17,7 +17,8 @@ try {
     
     const data = req.body
    await categorias.findByIdAndUpdate(id, data)
-    res.json("ok")
+   res.json({ value: "categoria editado con exito", status: true });
+
 } catch (error) {
     console.log(error);
 }
@@ -60,14 +61,7 @@ router.get('/', async (req, res)=>{
         res.json(error)
     }
 })
-router.delete('/', async (req, res)=>{
-   
-    try {
-        const data =await  categorias.findByIdAndUpdate({status:false})
-    res.json(data) 
-    } catch (error) {
-        res.json(error)
-    }
-})
+
+
 
 export default router
