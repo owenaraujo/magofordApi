@@ -1,14 +1,18 @@
 import ventas from "../models/ventas";
 import stock from "../models/stock"
 import productos from "../models/productos";
+import abonos from "../models/abonos"
+
+
+
 let falla = { value: "no hay respuesta del servdor", status: false }
 export async function save(req, res) {
   try {
     const datos = req.body;
-  
+
     let status = await Promise.all(
       datos.productos.map(async function (item) {
-        let producto = await stock.find({id_product: item.producto_id, id_tienda: item.ubicacion_id});
+        let producto = await stock.find({ id_product: item.producto_id, id_tienda: item.ubicacion_id });
         let cantidad = producto.cantidad - item.cantidad;
         if (cantidad < 0) return false;
         else {
@@ -25,9 +29,9 @@ export async function save(req, res) {
 
     await Promise.all(
       datos.productos.map(async function (item) {
-        let producto = await stock.findOne({id_product: item.producto_id, id_tienda: item.ubicacion_id});
+        let producto = await stock.findOne({ id_product: item.producto_id, id_tienda: item.ubicacion_id });
         let cantidad = producto.cantidad - item.cantidad;
-        
+
         await stock.findByIdAndUpdate(producto._id, {
           cantidad: cantidad,
         });
@@ -46,83 +50,187 @@ export async function save(req, res) {
     res.json(falla);
   }
 }
-export function editar(req, res) {
- try {
-  const { id } = req.params;
-  const datos = req.body;
-  console.log(datos, id);
- } catch (error) {
-  res.json(falla)
- }
+export async function editar(req, res) {
+  try {
+
+    const datos = req.body;
+    let venta = await ventas.findById(datos.id_venta)
+    
+    const result = await Promise.all(
+      venta.productos.map(async function (e) {
+        if (e.producto_id == datos.producto_id) {
+          
+          let result = await stock.findOne({ id_product: datos.producto_id, id_tienda: datos.id_tienda })
+          let newCantidad = result.cantidad + 1
+          e.cantidad = e.cantidad -1
+          if(e.cantidad < 0)return 0
+        
+          await stock.findByIdAndUpdate(result._id, {cantidad : newCantidad})
+          
+        }
+      })
+      )
+     if(result.indexOf(0) != -1) return res.json({status:false})
+       
+      await ventas.findByIdAndUpdate(datos.id_venta, venta)
+      let venta2 = await ventas.findById(datos.id_venta).populate({ path: "productos.producto_id" });
+    res.json({status:true, result: venta2})
+
+  } catch (error) {
+    console.log(error);
+    res.json(error)
+  }
 }
 
 export function activar(req, res) {
- try {
-  const { id } = req.params;
- 
-  const status = { status: true };
-  console.log(status, id);
- } catch (error) {
-  res.json(falla)
- }
+  try {
+    const { id } = req.params;
+
+    const status = { status: true };
+   
+  } catch (error) {
+    res.json(falla)
+  }
 }
 export async function filtroFecha(req, res) {
-  const {inicio, final}= req.params
-   
-    var fecha = 'T23:59:00.000Z'
-    var fechaInicio = new Date(inicio);
-    var fechaFinal = new Date(final+fecha);
-    const ventas = await ventas.find(
-     { createdAt:{
+  const { inicio, final } = req.params
+
+  var fecha = 'T23:59:00.000Z'
+  var fechaInicio = new Date(inicio);
+  var fechaFinal = new Date(final + fecha);
+  const ventas = await ventas.find(
+    {
+      createdAt: {
         $gte: fechaInicio,
         $lt: fechaFinal
-    }}
-    ) .find()
+      }
+    }
+  ).find()
     .populate("user_id")
     .populate({ path: "productos.producto_id" })
-    res.json(ventas)
+  res.json(ventas)
 }
 export function limit(req, res) {
   const { count } = req.params;
-  console.log(count);
+  
 }
 export function borrar(req, res) {
   const { id } = req.params;
   const status = { status: true };
-  console.log(status, id);
+  
 }
-export async function get(req, res) {
-  const data = await ventas
-    .find()
-    .populate("user_id")
-    .populate({ path: "productos.producto_id" });
-  res.json(data);
-}
+
 export async function getLimit(req, res) {
- try {
-  let { limit, page, inicio, final } = req.params;
-  let complementoFecha = 'T23:59:00.000Z'
+  
+  try {
+    let { limit, page, inicio, final } = req.params;
+    let complementoFecha = 'T23:59:00.000Z'
     let fechaInicio = new Date(inicio);
-    let fechaFinal = new Date(final+complementoFecha);
-  limit = parseInt(limit);
-  page = parseInt(page);
-  let fecha=
-  { createdAt:{
-    $gte: fechaInicio,
-    $lt: fechaFinal
-}}
-if(!inicio) fecha= null
-  const count = await ventas.countDocuments()
-  let pagination = { start: (page - 1) * limit, count: limit };
-  const data = await ventas
-    .find(fecha)
-    .skip(pagination.start)
-    .limit(pagination.count)
-    .populate("user_id")
-    .populate({ path: "productos.producto_id" });
-  res.json({ventas : data , count : count});
+    let fechaFinal = new Date(final + complementoFecha);
+    limit = parseInt(limit);
+    page = parseInt(page);
+    let fecha =
+    {
+      createdAt: {
+        $gte: fechaInicio,
+        $lt: fechaFinal
+      }
+    }
+    if (!inicio) fecha = null
+    const count = await ventas.countDocuments()
+    let pagination = { start: (page - 1) * limit, count: limit };
+    const data = await ventas
+      .find(fecha)
+      .skip(pagination.start)
+      .limit(pagination.count)
+      .populate("user_id")
+      .populate({ path: "productos.producto_id" });
+    res.json({ ventas: data, count: count });
+
+  } catch (error) {
+    res.json(falla)
+  }
+}
+
+export async function agregarAbonos(req, res) {
+
+  try {
+    let totalVenta = 0
+    let totalAbonos = 0
+    const { id } = req.params
+    const venta = await ventas.findById(id)
+
+    // suma de el total de los productos
+    await Promise.all(
+      venta.productos.map(async function (item) {
+
+        if (item.cantidad > 0) {
+          let num = item.cantidad * item.precio
+          totalVenta += parseFloat(num)
+
+          return item.cantidad * item.precio
+
+        }
+      })
+    )
+
+
+
+    const { cantidad } = req.body
+    const ListaAbonos = await abonos.find({ id_venta: id })
+    // suma de los abonos
+    await Promise.all(
+      ListaAbonos.map(async function (item) {
+        totalAbonos += item.cantidad
+
+      })
+    )
+    const sumaAbonos = parseFloat(cantidad) + totalAbonos
+    const abonosTotal = totalVenta - sumaAbonos
+    const restante = totalVenta - totalAbonos
+    if (abonosTotal < 0) {
+
+
+      return res.json("la cantidad de abonos supera el valor total de la factura" + ", total de abonos:" + totalAbonos + ", valor de la factura  :" + totalVenta + ", abono a agregar: " + cantidad + ", restante de la factura : " + restante)
+    }
+
+
+    const abono = { id_venta: id, cantidad: cantidad }
+    const result = await new abonos(abono)
+    await result.save()
+    res.json("abono por " + cantidad + " registrado con exito");
+  } catch (error) {
+    res.json(error)
+  }
+
+
+
+
+
+}
+
+export async function getAbonos(req, res) {
+  
+ try {
+  const {id} = req.params
+  
+  const data = await abonos.find({id_venta: id})
+  res.json(data)
 
  } catch (error) {
-  res.json(falla)
+  console.log(error);
+ }
+}
+export async function cancelar(req, res) {
+ 
+ try {
+  const {id} = req.query
+  console.log(req.query);
+  const data = await ventas.findByIdAndUpdate(id,{status:false})
+  res.json(data)
+
+ } catch (error) {
+  res.json(error);
+  console.log(error);
  }
 }

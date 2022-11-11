@@ -1,16 +1,18 @@
 import {Router} from 'express'
-import{save, get, getLimit} from "../controller/ventas"
+import{save,  getLimit, agregarAbonos, getAbonos, editar, cancelar} from "../controller/ventas"
 const route = Router()
 route.get('/default',(req,res)=>{
     res.json('default')
 })
-
+route.post('/cancelar/',cancelar)
+route.get('/abonos/:id',getAbonos)
 route.get('/:limit/:page', getLimit)
-route.get('/', get)
+
+
+route.post('/abonos/limit/:id',agregarAbonos)
 route.post('/',save)
-route.get('/:inicio/:fin')
-route.get('/:id')
-route.get('/limit/:count')
-route.put('/:id')
-route.delete('/:id')
+route.post('/edit',editar)
+
+
+
 export default route

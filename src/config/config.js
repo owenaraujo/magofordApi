@@ -19,21 +19,18 @@ cloudy.config(
     api_secret:process.env.apiSecret
   }
 )
-//import history from 'connect-history-api-fallback'
+
 app.use(cors())
 app.use(morgan("dev"))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 import {buscar} from './config.roles'
 import{createubicaciones} from "./config.ubicaciones"
-//app.use(history())
+
 app.use(express.static(path.join(__dirname, "../public")));
 createubicaciones()
 buscar()
-//app.get('/',(req, res) =>{
-  //  console.log('jola')
-    //res.json(info);
-//})
+
 import fu from "express-fileupload"
 app.use(fu() )
 app.use('/api/categorias', categorias)
