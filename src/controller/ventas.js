@@ -82,6 +82,18 @@ export async function editar(req, res) {
   }
 }
 
+export async function pagar(req, res) {
+  try {
+    const { id } = req.params;
+
+    const status = { pagado: true };
+    await ventas.findByIdAndUpdate(id, status)
+    res.json({status: true,  value:"factura pagada con exito"})
+   
+  } catch (error) {
+    res.json(falla)
+  }
+}
 export function activar(req, res) {
   try {
     const { id } = req.params;
@@ -155,6 +167,11 @@ export async function getLimit(req, res) {
 export async function agregarAbonos(req, res) {
 
   try {
+    
+    const { cantidad } = req.body
+    if (cantidad <= 0) {
+      return res.json({status: false , value: "no se puede realizar un abono en valor negativo o en cero"})
+    }
     let totalVenta = 0
     let totalAbonos = 0
     const { id } = req.params
@@ -176,7 +193,6 @@ export async function agregarAbonos(req, res) {
 
 
 
-    const { cantidad } = req.body
     const ListaAbonos = await abonos.find({ id_venta: id })
     // suma de los abonos
     await Promise.all(
@@ -191,16 +207,16 @@ export async function agregarAbonos(req, res) {
     if (abonosTotal < 0) {
 
 
-      return res.json("la cantidad de abonos supera el valor total de la factura" + ", total de abonos:" + totalAbonos + ", valor de la factura  :" + totalVenta + ", abono a agregar: " + cantidad + ", restante de la factura : " + restante)
+      return res.json({status:false, value :"la cantidad de abonos supera el valor total de la factura" })
     }
 
 
     const abono = { id_venta: id, cantidad: cantidad }
     const result = await new abonos(abono)
     await result.save()
-    res.json("abono por " + cantidad + " registrado con exito");
+    res.json({status: true, value : `abono por ${cantidad} registrado con exito`});
   } catch (error) {
-    res.json(error)
+    res.json(falla)
   }
 
 
