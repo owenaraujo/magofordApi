@@ -14,6 +14,7 @@ const venta = new Schema({
       producto_id: { type: Schema.Types.ObjectId, ref: "productos" },
     },
   ],
+  cliente: { type: String, required: false },
   nota: { type: String, required: false },
   status: { type: Boolean, default: true },
   

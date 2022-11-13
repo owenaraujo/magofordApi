@@ -8,7 +8,7 @@ route.post('/cancelar/',cancelar)
 route.post('/factura/pagar/:id',pagar)
 route.get('/abonos/:id',getAbonos)
 route.post('/abonos/:id',agregarAbonos)
-route.get('/:limit/:page', getLimit)
+route.get('/:limit/:page/:inicio/:final', getLimit)
 
 
 route.post('/',save)

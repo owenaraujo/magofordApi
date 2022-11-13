@@ -55,23 +55,23 @@ export async function editar(req, res) {
 
     const datos = req.body;
     let venta = await ventas.findById(datos.id_venta)
-    
+
     const result = await Promise.all(
       venta.productos.map(async function (e) {
         if (e.producto_id == datos.producto_id) {
-          
+
           let result = await stock.findOne({ id_product: datos.producto_id, id_tienda: datos.id_tienda })
           let newCantidad = result.cantidad + 1
           e.cantidad = e.cantidad -1
           if(e.cantidad < 0)return 0
-        
+
           await stock.findByIdAndUpdate(result._id, {cantidad : newCantidad})
-          
+
         }
       })
       )
      if(result.indexOf(0) != -1) return res.json({status:false})
-       
+
       await ventas.findByIdAndUpdate(datos.id_venta, venta)
       let venta2 = await ventas.findById(datos.id_venta).populate({ path: "productos.producto_id" });
     res.json({status:true, result: venta2})
@@ -89,7 +89,7 @@ export async function pagar(req, res) {
     const status = { pagado: true };
     await ventas.findByIdAndUpdate(id, status)
     res.json({status: true,  value:"factura pagada con exito"})
-   
+
   } catch (error) {
     res.json(falla)
   }
@@ -99,7 +99,7 @@ export function activar(req, res) {
     const { id } = req.params;
 
     const status = { status: true };
-   
+
   } catch (error) {
     res.json(falla)
   }
@@ -124,23 +124,28 @@ export async function filtroFecha(req, res) {
 }
 export function limit(req, res) {
   const { count } = req.params;
-  
+
 }
 export function borrar(req, res) {
   const { id } = req.params;
   const status = { status: true };
-  
+
 }
 
 export async function getLimit(req, res) {
-  
+
+
   try {
+   
     let { limit, page, inicio, final } = req.params;
     let complementoFecha = 'T23:59:00.000Z'
-    let fechaInicio = new Date(inicio);
+    "2022-11-02T18:50:02.320+00:00"
+    
+    let fechaInicio = new Date(inicio).toISOString();
     let fechaFinal = new Date(final + complementoFecha);
     limit = parseInt(limit);
     page = parseInt(page);
+    
     let fecha =
     {
       createdAt: {
@@ -148,11 +153,23 @@ export async function getLimit(req, res) {
         $lt: fechaFinal
       }
     }
+    console.log(fecha);
     if (!inicio) fecha = null
     const count = await ventas.countDocuments()
     let pagination = { start: (page - 1) * limit, count: limit };
+   
+   
+    
     const data = await ventas
-      .find(fecha)
+      .find({
+         pagado: req.query.pago,
+        createdAt: {
+          $gte: fechaInicio,
+          $lt: fechaFinal
+        }    
+
+       
+      })
       .skip(pagination.start)
       .limit(pagination.count)
       .populate("user_id")
@@ -160,14 +177,15 @@ export async function getLimit(req, res) {
     res.json({ ventas: data, count: count });
 
   } catch (error) {
-    res.json(falla)
+    res.json(error)
+    // res.json(falla)
   }
 }
 
 export async function agregarAbonos(req, res) {
 
   try {
-    
+
     const { cantidad } = req.body
     if (cantidad <= 0) {
       return res.json({status: false , value: "no se puede realizar un abono en valor negativo o en cero"})
@@ -226,10 +244,10 @@ export async function agregarAbonos(req, res) {
 }
 
 export async function getAbonos(req, res) {
-  
+
  try {
   const {id} = req.params
-  
+
   const data = await abonos.find({id_venta: id})
   res.json(data)
 
@@ -238,7 +256,7 @@ export async function getAbonos(req, res) {
  }
 }
 export async function cancelar(req, res) {
- 
+
  try {
   const {id} = req.query
   console.log(req.query);
