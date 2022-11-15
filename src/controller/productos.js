@@ -127,8 +127,39 @@ export async function activar(req, res) {
 }
 export async function buscar(req, res) {
   try {
-    const producto = await productos.find();
-    res.json(producto);
+    const limit = parseInt(req.query.limit);
+
+    const page = parseInt(req.query.page);
+    let pagination = { start: (page - 1) * limit, count: limit };
+    const count = await productos.countDocuments(
+      { $or: [
+        {
+          codigo: { $regex: req.query.Name + `.*`, $options: "i" },
+        },
+        {
+          descripcion: {
+            $regex: `.*` + req.query.Name + `.*`,
+            $options: "i",
+          },
+        },
+      ],}
+    );
+
+    const producto = await productos.find(
+     { $or: [
+        {
+          codigo: { $regex: req.query.Name + `.*`, $options: "i" },
+        },
+        {
+          descripcion: {
+            $regex: `.*` + req.query.Name + `.*`,
+            $options: "i",
+          },
+        },
+      ],}
+
+    ).skip(pagination.start).limit(pagination.count);
+    res.json({productos:producto, count: count});
   } catch (error) {
     res.json({ value: "no hay respuesta del servdor", status: false });
   }
@@ -136,11 +167,28 @@ export async function buscar(req, res) {
 // hay que agregar esta funcion al path
 export async function buscarActivos(req, res) {
   try {
+    console.log(req.query);
     const limit = parseInt(req.query.limit);
 
     const page = parseInt(req.query.page);
     let pagination = { start: (page - 1) * limit, count: limit };
-    const count = await productos.countDocuments();
+    const count = await productos.countDocuments(
+      {
+        $or: [
+          {
+            codigo: { $regex: req.query.Name + `.*`, $options: "i" },
+          },
+          {
+            descripcion: {
+              $regex: `.*` + req.query.Name + `.*`,
+              $options: "i",
+            },
+          },
+        ],
+
+        status: true,
+      }
+    );
 
     const producto = await productos
       .find({
